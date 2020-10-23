@@ -9,8 +9,10 @@
 #include <ctype.h>
 #include <string.h>
 
+#define SIZE 20
+
+void format(char *);
 int getOperation(char *);
-void convertToLowercase(char *);
 void multiply(double, double);
 void divide(double, double);
 void add(double, double);
@@ -23,7 +25,7 @@ int main() {
 
     void (*functions[4])(double, double) = {multiply, divide, add, subtract};
 
-    char uString[9];    // User's input string
+    char uString[SIZE];    // User's input string
     int uOperation;     // User's selected Operation
     double uN1, uN2;    // User's number input
 
@@ -31,6 +33,7 @@ int main() {
         printf("What calculation would you like to perform?\n"
                "Options: Multiply, Divide, Add, Subtract\n");
         scanf("%s", uString);
+        format(uString);
         uOperation = getOperation(uString);
     } while(uOperation == 4);           // Error checking user's input
 
@@ -49,23 +52,39 @@ int main() {
     return 0;
 }
 
+// Formats a string input to remove punctuation and spaces
+void format(char *sPtr) {
+    char *sta = sPtr;   // starting string
+    char *res = sPtr;   // resulting string
+
+    while (*sta) {
+        if (ispunct((unsigned char)*sta)) {         // removing punctuation
+            sta++;
+        }
+        else if (isupper((unsigned char)*sta)) {    // converting to lowercase
+            *res++ = tolower((unsigned char)*sta);
+            sta++;
+        }
+        else if (sta == res) {
+            sta++;
+            res++;
+        }
+        else {
+            *res++ = *sta++;
+        }
+    }
+    *res = 0;
+}
+
 // Return the corresponding operation number
 int getOperation(char *sPtr) {
-    convertToLowercase(sPtr);
+//    convertToLowercase(sPtr);
     for (int i = 0; i < 4; ++i) {
         if (strcmp(sPtr, operationStrPtr[i]) == 0) {
             return i;
             }
         }
     return 4;
-}
-
-// Converts a string input to lowercase
-void convertToLowercase(char *sPtr) {
-    while (*sPtr != '\0') {
-        *sPtr = tolower(*sPtr);
-        ++sPtr;
-    }
 }
 
 // Multiplies the two numbers and calls print
